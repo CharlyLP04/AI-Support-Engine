@@ -4,7 +4,7 @@ Prototipo de clasificación de solicitudes de soporte con dos motores bajo un mi
 
 ## Equipo
 
-Proyecto: **AI Support Engine** · Materias: **PWA y DMI**.
+Proyecto: **AI Support Engine** ·
 
 - Carlos Olaya Gutiérrez
 - Alexis Montalvo Osorio
