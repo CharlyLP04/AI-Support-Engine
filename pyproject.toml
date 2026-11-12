@@ -1,0 +1,21 @@
+[project]
+name = "ai-support-engine"
+version = "0.1.0"
+description = "Traditional rules and Hermes-powered generative support triage API"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "httpx>=0.27,<1",
+  "pydantic>=2,<3",
+  "uvicorn[standard]>=0.30,<1",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8,<9",
+  "pytest-cov>=5,<7",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

@@ -1,0 +1,23 @@
+{
+  "generated_at_utc": "2026-11-12T23:36:17.901101+00:00",
+  "cases_per_mode": 12,
+  "total_requests": 24,
+  "generative_model": "nous/welcome",
+  "metrics": {
+    "traditional": {
+      "cases": 12,
+      "format_compliance_pct": 100.0,
+      "category_accuracy_pct": 100.0,
+      "priority_accuracy_pct": 100.0,
+      "exact_accuracy_pct": 100.0
+    },
+    "generative": {
+      "cases": 12,
+      "format_compliance_pct": 100.0,
+      "category_accuracy_pct": 100.0,
+      "priority_accuracy_pct": 83.3,
+      "exact_accuracy_pct": 83.3
+    }
+  },
+  "results_csv": "reports/results.csv"
+}
