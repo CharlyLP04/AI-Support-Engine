@@ -2,6 +2,18 @@
 
 Prototipo de clasificación de solicitudes de soporte con dos motores bajo un mismo contrato: reglas deterministas y generación real mediante el proxy local de Hermes Agent.
 
+## Equipo
+
+Proyecto: **AI Support Engine** · Materias: **PWA y DMI**.
+
+- Carlos Olaya Gutiérrez
+- Alexis Montalvo Osorio
+- Carlos Alberto Pacheco Avila
+
+## Colaboración
+
+Las reglas completas están en [AGENTS.md](AGENTS.md). Cada tarea usa su propia rama y se entrega mediante Pull Request hacia `main`. No se permite push directo a `main`, force push ni fusionar sin autorización explícita de Charly. Codex y Hermes trabajan en ramas separadas y nunca se suben secretos.
+
 ## Requisitos
 
 - Windows 10/11, Python 3.12 o posterior y `uv`.
