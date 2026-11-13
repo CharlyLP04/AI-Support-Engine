@@ -115,8 +115,14 @@ El filtro de solicitudes de secretos se aplica a todas las categorías, incluido
 - API y errores: `app/main.py`, `app/schemas.py`; solicitudes inválidas producen 422 y fallos del proveedor, 502.
 - Seguridad: revisión humana para SECURITY, guardarraíl de prioridad y filtro heurístico de solicitudes de secretos.
 - Comparación: 12 casos por motor, referencias en `data/benchmark_cases.json`, respuestas y métricas en `reports/`.
-- Verificación automatizada: 44 pruebas; incluye recomputar las métricas guardadas y comprobar el límite de palabras de la conclusión.
+- Verificación automatizada: 45 pruebas; incluye recomputar las métricas guardadas y comprobar el límite de palabras de la conclusión.
 
 Las pruebas unitarias simulan fallos y respuestas del proveedor para verificar el manejo de errores; no se presentan como evidencia de generación real. El CSV conserva la ejecución previa realizada con Hermes. La revisión posterior comprobó su coherencia y no repitió las llamadas al modelo. Las métricas generativas corresponden al sistema completo con guardarraíles, no al modelo aislado.
 
 **Atención:** ejecutar el benchmark, incluso con `--limit`, sobrescribe los archivos de resultados. Conserva una copia de las evidencias antes de repetirlo.
+
+## Interfaz gráfica
+
+Con la API iniciada, abre http://127.0.0.1:8000/ en el navegador. Permite elegir motor, cargar ejemplos, analizar solicitudes y copiar la respuesta o consultar su JSON. El modo tradicional funciona sin Hermes; para el generativo inicia también el proxy. La interfaz no guarda mensajes en almacenamiento del navegador.
+
+Validación de interfaz: navegador Chrome a 1440 y 390 píxeles, solicitudes tradicionales reales de acceso/falla/seguridad, recuperación ante HTTP 502 simulado y ausencia de errores JavaScript. No se repitieron llamadas generativas reales en esta validación.
