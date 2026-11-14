@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import Path
 import re
 from typing import Any
 from urllib.parse import urlsplit
@@ -9,6 +10,9 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from app.rules import detect_security_priority
 from app.schemas import AnalysisResult, Category, Mode, Priority
+
+_GEMINI_OPENAI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai"
+_DEFAULT_GEMINI_MODEL = "gemini-4-hydrogen"
 
 
 class ModelOutputError(ValueError):
@@ -74,13 +78,55 @@ def _validate_proxy_url(base_url: str) -> None:
     raise HermesProviderError("Un proxy remoto debe usar HTTPS; HTTP solo se permite en localhost.")
 
 
+def _read_env_file_key(path: Path, keys: tuple[str, ...]) -> str | None:
+    try:
+        if not path.is_file():
+            return None
+        for raw_line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, _, v = line.partition("=")
+            k = k.strip()
+            v = v.strip().strip('"').strip("'")
+            if k in keys and v:
+                return v
+    except OSError:
+        return None
+    return None
+
+
+def _discover_hermes_gemini_key() -> str | None:
+    for env_name in ("GEMINI_API_KEY", "GOOGLE_API_KEY"):
+        val = os.getenv(env_name)
+        if val:
+            return val
+    candidates = [Path(".env")]
+    local_app_data = os.getenv("LOCALAPPDATA")
+    if local_app_data:
+        candidates.append(Path(local_app_data) / "hermes" / ".env")
+    candidates.append(Path.home() / ".hermes" / ".env")
+    for candidate in candidates:
+        found = _read_env_file_key(candidate, ("GEMINI_API_KEY", "GOOGLE_API_KEY"))
+        if found:
+            return found
+    return None
+
+
 def analyze_generative(message: str) -> AnalysisResult:
-    """Call the local Hermes subscription proxy; never fabricate a fallback."""
-    base_url = os.getenv("HERMES_PROXY_URL", "http://127.0.0.1:8645/v1").rstrip("/")
+    """Call the configured OpenAI-compatible provider (Gemini or Hermes proxy); never fabricate a fallback."""
+    explicit_url = os.getenv("HERMES_PROXY_URL")
+    gemini_key = _discover_hermes_gemini_key() if not explicit_url else None
+    if gemini_key:
+        base_url = _GEMINI_OPENAI_BASE_URL
+        model = os.getenv("HERMES_MODEL", _DEFAULT_GEMINI_MODEL)
+        api_key = os.getenv("HERMES_PROXY_API_KEY", gemini_key)
+    else:
+        base_url = (explicit_url or "http://127.0.0.1:8645/v1").rstrip("/")
+        model = os.getenv("HERMES_MODEL", "nous/welcome")
+        api_key = os.getenv("HERMES_PROXY_API_KEY", "local-proxy")
     _validate_proxy_url(base_url)
-    model = os.getenv("HERMES_MODEL", "nous/welcome")
     timeout = float(os.getenv("HERMES_TIMEOUT_SECONDS", "60"))
-    api_key = os.getenv("HERMES_PROXY_API_KEY", "local-proxy")
     payload = {
         "model": model,
         "messages": [

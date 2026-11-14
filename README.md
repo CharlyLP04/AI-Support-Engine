@@ -35,23 +35,18 @@ uv run pytest -q
 
 ### Opción A: Ejecutar el modo generativo con la API gratuita de Google Gemini (Recomendado)
 
-Tras agotarse la capa gratuita de Nous Portal, puedes ejecutar el motor generativo directamente con una clave gratuita de [Google AI Studio](https://aistudio.google.com/) en la misma terminal donde inicies la API:
+Si ya conectaste tu clave de Google Gemini en Hermes (o defines `GEMINI_API_KEY` / un archivo `.env` local), **la API la detecta automáticamente** con el modelo `gemini-4-hydrogen` sin siquiera necesitar levantar el proxy aparte:
 
 ```powershell
-$env:HERMES_PROXY_URL = "https://generativelanguage.googleapis.com/v1beta/openai"
-$env:HERMES_MODEL = "gemini-2.5-flash"
-$env:HERMES_PROXY_API_KEY = "TU_API_KEY_DE_GOOGLE_AI_STUDIO"
 uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-También puedes usar Gemini a través del proxy local de Hermes (si ya conectaste Google Gemini en Hermes):
+Si prefieres pasar la clave manualmente en otra computadora donde no esté Hermes:
 
 ```powershell
-# Terminal 1 (Proxy de Hermes con Gemini):
-hermes proxy start --provider gemini --host 127.0.0.1 --port 8645
-
-# Terminal 2 (API):
-$env:HERMES_MODEL = "gemini-2.5-flash"
+$env:HERMES_PROXY_URL = "https://generativelanguage.googleapis.com/v1beta/openai"
+$env:HERMES_MODEL = "gemini-4-hydrogen"
+$env:HERMES_PROXY_API_KEY = "TU_API_KEY_DE_GOOGLE_AI_STUDIO"
 uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
