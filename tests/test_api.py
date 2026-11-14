@@ -79,3 +79,12 @@ def test_provider_failures_return_502_without_payload(monkeypatch, failure):
     result = client.post("/api/analyze", json={"message": "No puedo entrar", "mode": "generative"})
     assert result.status_code == 502
     assert "secret-upstream-value" not in result.text
+
+
+def test_interface_and_assets_are_served():
+    page = client.get("/")
+    assert page.status_code == 200
+    assert "text/html" in page.headers["content-type"]
+    assert "analyze-form" in page.text
+    for path in ("/static/style.css", "/static/app.js"):
+        assert client.get(path).status_code == 200
