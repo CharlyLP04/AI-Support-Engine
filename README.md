@@ -17,9 +17,12 @@ Las reglas completas están en [AGENTS.md](AGENTS.md). Cada tarea usa su propia 
 ## Requisitos
 
 - Windows 10/11, Python 3.12 o posterior y `uv`.
-- Hermes Agent instalado y autenticado con un proveedor compatible. Este proyecto usa Nous Portal mediante `hermes proxy`; el modelo predeterminado es `nous/welcome`.
+- Hermes Agent instalado y autenticado con un proveedor compatible, o una clave gratuita de **Google AI Studio (Gemini API)**.
 
-La integración usa el proxy local de Hermes en `127.0.0.1:8645`. No guarda claves del proveedor en el repositorio. Las solicitudes enviadas al modo `generative` salen del equipo hacia el proveedor configurado en Hermes; utiliza datos sintéticos para las pruebas y no envíes información personal o confidencial sin autorización.
+> **Nota sobre el proveedor generativo (Hermes / Nous Portal → Google Gemini):**
+> El desarrollo inicial y la corrida comparativa de 24 peticiones guardada en `reports/` se ejecutaron mediante el proxy local de **Hermes Agent** conectado a la capa gratuita de **Nous Portal** (`nous/welcome`). Al agotarse los créditos gratuitos iniciales de Nous Portal, se configuró el soporte para la **API gratuita de Google Gemini (Google AI Studio)** tanto a través de Hermes (`--provider gemini`) como mediante el endpoint compatible con OpenAI de Gemini, manteniendo exactamente el mismo contrato y sin almacenar claves en el repositorio.
+
+La integración usa por defecto el proxy local de Hermes en `127.0.0.1:8645` o el endpoint HTTPS del proveedor configurado. No guarda claves del proveedor en el repositorio. Las solicitudes enviadas al modo `generative` salen del equipo hacia el proveedor configurado; utiliza datos sintéticos para las pruebas y no envíes información personal o confidencial sin autorización.
 
 ## Instalación y ejecución
 
@@ -30,7 +33,31 @@ uv sync --all-groups
 uv run pytest -q
 ```
 
-Abre una terminal para el proxy de Hermes y déjala abierta:
+### Opción A: Ejecutar el modo generativo con la API gratuita de Google Gemini (Recomendado)
+
+Tras agotarse la capa gratuita de Nous Portal, puedes ejecutar el motor generativo directamente con una clave gratuita de [Google AI Studio](https://aistudio.google.com/) en la misma terminal donde inicies la API:
+
+```powershell
+$env:HERMES_PROXY_URL = "https://generativelanguage.googleapis.com/v1beta/openai"
+$env:HERMES_MODEL = "gemini-2.5-flash"
+$env:HERMES_PROXY_API_KEY = "TU_API_KEY_DE_GOOGLE_AI_STUDIO"
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+También puedes usar Gemini a través del proxy local de Hermes (si ya conectaste Google Gemini en Hermes):
+
+```powershell
+# Terminal 1 (Proxy de Hermes con Gemini):
+hermes proxy start --provider gemini --host 127.0.0.1 --port 8645
+
+# Terminal 2 (API):
+$env:HERMES_MODEL = "gemini-2.5-flash"
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+### Opción B: Ejecución original con Hermes y Nous Portal
+
+Si cuentas con saldo o capa gratuita activa en Nous Portal, abre una terminal para el proxy de Hermes y déjala abierta:
 
 ```powershell
 hermes proxy start --provider nous --host 127.0.0.1 --port 8645
