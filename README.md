@@ -148,3 +148,27 @@ Las pruebas unitarias simulan fallos y respuestas del proveedor para verificar e
 Con la API iniciada, abre http://127.0.0.1:8000/ en el navegador. Permite elegir motor, cargar ejemplos, analizar solicitudes y copiar la respuesta o consultar su JSON. El modo tradicional funciona sin Hermes; para el generativo inicia también el proxy. La interfaz no guarda mensajes en almacenamiento del navegador.
 
 Validación de interfaz: navegador Chrome a 1440 y 390 píxeles, solicitudes tradicionales reales de acceso/falla/seguridad, recuperación ante HTTP 502 simulado y ausencia de errores JavaScript. No se repitieron llamadas generativas reales en esta validación.
+
+## Motor local de machine learning
+
+Instala las dependencias actualizadas con `uv sync --all-groups`. Para ejecutar el script de entrenamiento, evaluación y predicción del ejemplo:
+
+```powershell
+uv run python -m app.machine_learning
+```
+
+`data/tickets.csv` contiene 40 mensajes sintéticos ilustrativos, diez por categoría, creados para este prototipo. Se separan de forma estratificada en 32 ejemplos de entrenamiento y ocho de evaluación con `random_state=42`. El pipeline combina `TfidfVectorizer(ngram_range=(1, 2))` y `LogisticRegression(max_iter=1000)`. El vocabulario se aprende únicamente de entrenamiento. El reporte impreso mide la categoría predicha por el modelo, antes de aplicar reglas de seguridad. Esta muestra pequeña requiere revisión del equipo y ampliación para evaluar generalización. Los casos comparativos históricos permanecen en sus archivos originales.
+
+Inicia la API en Windows con:
+
+```powershell
+uv run python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+Selecciona **Machine learning** en la interfaz o envía `{"message":"No puedo iniciar sesión","mode":"machine_learning"}` a `POST /api/analyze`. El proceso entrena el modelo al recibir la primera solicitud de este modo y lo conserva en memoria. Para tomar cambios del CSV, reinicia la API. Un fallo del modelo o sus datos devuelve 503.
+
+El modelo predice la categoría. Las reglas compartidas calculan la prioridad y las plantillas proporcionan la respuesta. La detección de seguridad puede sustituir la categoría por SECURITY y activar revisión humana. Por eso el resultado completo combina aprendizaje automático y reglas. Este motor se ejecuta localmente.
+
+El benchmark histórico sigue comparando los dos motores originales. Para integrar el tercero en una comparación completa deberán definir y ejecutar una nueva evaluación independiente.
+
+Verificación de esta ampliación: 50 pruebas aprobadas, con la advertencia existente de Starlette/httpx. La evaluación del modelo en ocho mensajes reservados obtuvo 50 % de exactitud de categoría (4/8). El ejemplo de acceso sin autorización produjo SECURITY. Esta cifra describe únicamente el conjunto sintético inicial y no acredita precisión de producción. Las pruebas de la API incluyen el contrato ML, el control de errores y la prioridad crítica con revisión humana ante una instrucción que intenta rebajar una vulnerabilidad.

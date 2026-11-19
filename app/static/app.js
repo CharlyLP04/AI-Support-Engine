@@ -7,7 +7,7 @@ const priorities = { LOW: 'Baja', MEDIUM: 'Media', HIGH: 'Alta', CRITICAL: 'Crí
 function updateCount() { $('count').textContent = `${message.value.length} / 4000`; message.setCustomValidity(''); }
 message.addEventListener('input', updateCount);
 document.querySelectorAll('[data-example]').forEach(button => button.addEventListener('click', () => { message.value = button.dataset.example; updateCount(); message.focus(); }));
-form.addEventListener('change', () => { $('privacy').textContent = form.elements.mode.value === 'generative' ? 'El mensaje se enviará al proveedor de IA configurado. Usa datos sintéticos y no incluyas contraseñas ni información confidencial.' : 'El motor tradicional analiza el mensaje mediante reglas, sin enviarlo a un modelo.'; });
+form.addEventListener('change', () => { $('privacy').textContent = form.elements.mode.value === 'generative' ? 'El mensaje se enviará al proveedor de IA configurado. Usa datos sintéticos y no incluyas contraseñas ni información confidencial.' : form.elements.mode.value === 'machine_learning' ? 'El clasificador local aprende de ejemplos sintéticos. La prioridad y la respuesta usan reglas y plantillas.' : 'El motor tradicional analiza el mensaje mediante reglas, sin enviarlo a un modelo.'; });
 form.addEventListener('submit', async event => {
   event.preventDefault();
   if ($('submit').disabled) return;
@@ -30,7 +30,7 @@ form.addEventListener('submit', async event => {
     latest = data;
     $('category').textContent = categories[data.category];
     $('priority').textContent = priorities[data.priority]; $('priority').dataset.priority = data.priority;
-    $('engine-label').textContent = data.mode === 'generative' ? 'Motor generativo' : 'Motor tradicional';
+    $('engine-label').textContent = data.mode === 'generative' ? 'Motor generativo' : data.mode === 'machine_learning' ? 'Machine learning' : 'Motor tradicional';
     $('elapsed').textContent = `${((performance.now() - start) / 1000).toFixed(1)} s`;
     $('review').textContent = data.requiresHumanReview ? '⚑ Requiere revisión humana por el equipo de seguridad' : '✓ Sin revisión humana requerida por el motor';
     $('review').classList.toggle('warning', data.requiresHumanReview);

@@ -81,6 +81,12 @@ def classify_traditional(message: str) -> AnalysisResult:
     else:
         category = Category.BUG
 
+    return build_result(text, category, Mode.TRADITIONAL)
+
+
+def build_result(text: str, category: Category, mode: Mode) -> AnalysisResult:
+    """Apply shared priority rules and response templates to a category."""
+    security_priority = detect_security_priority(text)
     if category is Category.SECURITY:
         priority = security_priority or Priority.HIGH
     elif category is Category.ACCESS:
@@ -99,5 +105,5 @@ def classify_traditional(message: str) -> AnalysisResult:
         priority=priority,
         response=_RESPONSES[category],
         requiresHumanReview=(category is Category.SECURITY),
-        mode=Mode.TRADITIONAL,
+        mode=mode,
     )

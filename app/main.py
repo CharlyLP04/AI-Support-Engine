@@ -5,6 +5,7 @@ from fastapi import FastAPI, HTTPException
 
 from app.generative import HermesProviderError, ModelOutputError, analyze_generative
 from app.rules import classify_traditional
+from app.machine_learning import analyze_machine_learning
 from app.schemas import AnalysisResult, AnalyzeRequest, Mode
 
 
@@ -24,6 +25,12 @@ def health() -> dict[str, str]:
 def analyze(request: AnalyzeRequest) -> AnalysisResult:
     if request.mode is Mode.TRADITIONAL:
         return classify_traditional(request.message)
+
+    if request.mode is Mode.MACHINE_LEARNING:
+        try:
+            return analyze_machine_learning(request.message)
+        except Exception:
+            raise HTTPException(status_code=503, detail="El modelo local no está disponible.") from None
 
     try:
         return analyze_generative(request.message)

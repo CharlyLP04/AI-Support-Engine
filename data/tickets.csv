@@ -1,0 +1,41 @@
+message,category
+Olvidé mi contraseña y necesito restablecerla,ACCESS
+Mi cuenta está bloqueada al iniciar sesión,ACCESS
+No puedo entrar con mis credenciales,ACCESS
+El código de acceso nunca llega a mi correo,ACCESS
+Necesito recuperar mi cuenta de usuario,ACCESS
+La pantalla de login rechaza mi contraseña,ACCESS
+No tengo permisos para entrar al panel,ACCESS
+La sesión se cierra al identificarme,ACCESS
+Mi usuario no puede autenticarse,ACCESS
+El enlace para recuperar la contraseña expiró,ACCESS
+La aplicación se congela al guardar un reporte,BUG
+El botón de guardar muestra un error,BUG
+El panel presenta un error al cargar los datos,BUG
+La pantalla queda en blanco al abrir un informe,BUG
+El cálculo del total devuelve un valor incorrecto,BUG
+La búsqueda muestra resultados repetidos,BUG
+El sistema se cierra al subir una imagen,BUG
+Los filtros de fecha no funcionan,BUG
+La descarga del reporte genera un archivo vacío,BUG
+La tabla muestra una fecha incorrecta,BUG
+Quiero agregar un modo oscuro al panel,FEATURE
+Me gustaría exportar los reportes a Excel,FEATURE
+Necesitamos una nueva función de recordatorios,FEATURE
+Propongo añadir un calendario a la aplicación,FEATURE
+Quiero incorporar notificaciones por correo,FEATURE
+Sería útil agregar búsqueda por etiquetas,FEATURE
+Solicito una nueva opción para personalizar colores,FEATURE
+Podrían incluir un resumen semanal,FEATURE
+Me gustaría añadir soporte para varios idiomas,FEATURE
+Necesitamos incorporar una vista de estadísticas,FEATURE
+Alguien entró a mi cuenta sin autorización,SECURITY
+Encontré una vulnerabilidad en el sistema,SECURITY
+Se filtraron datos privados de los usuarios,SECURITY
+Hay un token expuesto en la página pública,SECURITY
+Detectamos un acceso no autorizado al servidor,SECURITY
+Mi cuenta fue comprometida por un atacante,SECURITY
+Un atacante puede extraer datos de otra cuenta,SECURITY
+El servidor recibió un ataque de ransomware,SECURITY
+Reporto una brecha de seguridad en la plataforma,SECURITY
+Una persona desconocida está consultando información privada,SECURITY
