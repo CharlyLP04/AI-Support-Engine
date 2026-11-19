@@ -20,6 +20,7 @@ class Priority(StrEnum):
 class Mode(StrEnum):
     TRADITIONAL = "traditional"
     GENERATIVE = "generative"
+    MACHINE_LEARNING = "machine_learning"
 
 
 class AnalyzeRequest(BaseModel):
