@@ -1,0 +1,111 @@
+{
+  "ml_test_evaluation": {
+    "dataset_path": "tickets.csv",
+    "total_records": 200,
+    "train_size": 160,
+    "test_size": 40,
+    "classes": [
+      "ACCESS",
+      "BUG",
+      "FEATURE",
+      "SECURITY"
+    ],
+    "accuracy": 0.925,
+    "security_recall": 1.0,
+    "security_precision": 0.9091,
+    "security_false_negatives": 0,
+    "security_false_positives": 1,
+    "confusion_matrix": [
+      [
+        9,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        9,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        9,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        10
+      ]
+    ],
+    "classification_report": {
+      "ACCESS": {
+        "precision": 0.9,
+        "recall": 0.9,
+        "f1-score": 0.9,
+        "support": 10.0
+      },
+      "BUG": {
+        "precision": 0.9,
+        "recall": 0.9,
+        "f1-score": 0.9,
+        "support": 10.0
+      },
+      "FEATURE": {
+        "precision": 1.0,
+        "recall": 0.9,
+        "f1-score": 0.9473684210526315,
+        "support": 10.0
+      },
+      "SECURITY": {
+        "precision": 0.9090909090909091,
+        "recall": 1.0,
+        "f1-score": 0.9523809523809523,
+        "support": 10.0
+      },
+      "accuracy": 0.925,
+      "macro avg": {
+        "precision": 0.9272727272727272,
+        "recall": 0.925,
+        "f1-score": 0.9249373433583961,
+        "support": 40.0
+      },
+      "weighted avg": {
+        "precision": 0.9272727272727274,
+        "recall": 0.925,
+        "f1-score": 0.9249373433583961,
+        "support": 40.0
+      }
+    }
+  },
+  "low_confidence_threshold": 0.45,
+  "three_engine_comparison": {
+    "traditional": {
+      "cases": 12,
+      "category_accuracy_pct": 100.0,
+      "security_recall_pct": 100.0,
+      "latency_p95_ms": 0.04,
+      "cost_per_100_queries": "$0.00 (local)",
+      "human_review_pct": 25.0
+    },
+    "machine_learning": {
+      "cases": 12,
+      "category_accuracy_pct": 100.0,
+      "security_recall_pct": 100.0,
+      "latency_p95_ms": 1.04,
+      "cost_per_100_queries": "$0.00 (local)",
+      "human_review_pct": 91.7
+    },
+    "generative": {
+      "cases": 12,
+      "category_accuracy_pct": 100.0,
+      "security_recall_pct": 100.0,
+      "latency_p95_ms": "N/A (API externa)",
+      "cost_per_100_queries": "Cuota API / Variable",
+      "human_review_pct": 25.0
+    }
+  }
+}
