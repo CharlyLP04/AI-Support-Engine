@@ -149,15 +149,15 @@ Con la API iniciada, abre http://127.0.0.1:8000/ en el navegador. Permite elegir
 
 Validación de interfaz: navegador Chrome a 1440 y 390 píxeles, solicitudes tradicionales reales de acceso/falla/seguridad, recuperación ante HTTP 502 simulado y ausencia de errores JavaScript. No se repitieron llamadas generativas reales en esta validación.
 
-## Motor local de machine learning
+## Motor local de machine learning (AI Support Engine V2)
 
-Instala las dependencias actualizadas con `uv sync --all-groups`. Para ejecutar el script de entrenamiento, evaluación y predicción del ejemplo:
+Instala las dependencias actualizadas con `uv sync --all-groups`. Para ejecutar el entrenamiento, la matriz de confusión, las pruebas de inferencia y exportar el reporte V2:
 
 ```powershell
-uv run python -m app.machine_learning
+uv run python -m app.machine_learning --export-report
 ```
 
-`data/tickets.csv` contiene 40 mensajes sintéticos ilustrativos, diez por categoría, creados para este prototipo. Se separan de forma estratificada en 32 ejemplos de entrenamiento y ocho de evaluación con `random_state=42`. El pipeline combina `TfidfVectorizer(ngram_range=(1, 2))` y `LogisticRegression(max_iter=1000)`. El vocabulario se aprende únicamente de entrenamiento. El reporte impreso mide la categoría predicha por el modelo, antes de aplicar reglas de seguridad. Esta muestra pequeña requiere revisión del equipo y ampliación para evaluar generalización. Los casos comparativos históricos permanecen en sus archivos originales.
+`data/tickets.csv` contiene **200 mensajes sintéticos únicos y balanceados** (50 por categoría), con división fija sin fuga de datos (`split`): **160 para entrenamiento (`train`) y 40 para prueba independiente (`test`)**, cero duplicados y todos los incidentes `SECURITY` marcados con `requiresHumanReview=TRUE`. El pipeline combina `TfidfVectorizer(ngram_range=(1, 2))` y `LogisticRegression(max_iter=1000, random_state=42)`, ajustando el vocabulario exclusivamente con `train`.
 
 Inicia la API en Windows con:
 
@@ -165,10 +165,10 @@ Inicia la API en Windows con:
 uv run python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Selecciona **Machine learning** en la interfaz o envía `{"message":"No puedo iniciar sesión","mode":"machine_learning"}` a `POST /api/analyze`. El proceso entrena el modelo al recibir la primera solicitud de este modo y lo conserva en memoria. Para tomar cambios del CSV, reinicia la API. Un fallo del modelo o sus datos devuelve 503.
+Selecciona **Machine learning** en la interfaz o envía `{"message":"No puedo iniciar sesión","mode":"machine_learning"}` a `POST /api/analyze`. El modelo predice la categoría y su score aproximado (`predict_proba`); si el score es menor al umbral de confianza (`0.45`) o si `detect_security_priority` detecta un posible incidente, activa `requiresHumanReview: true`. Las reglas compartidas completan prioridad y plantilla de respuesta. Un fallo del modelo devuelve HTTP 503 sin filtrar detalles internos.
 
-El modelo predice la categoría. Las reglas compartidas calculan la prioridad y las plantillas proporcionan la respuesta. La detección de seguridad puede sustituir la categoría por SECURITY y activar revisión humana. Por eso el resultado completo combina aprendizaje automático y reglas. Este motor se ejecuta localmente.
+### Resultados V2 y comparativa de los 3 motores
 
-El benchmark histórico sigue comparando los dos motores originales. Para integrar el tercero en una comparación completa deberán definir y ejecutar una nueva evaluación independiente.
-
-Verificación de esta ampliación: 50 pruebas aprobadas, con la advertencia existente de Starlette/httpx. La evaluación del modelo en ocho mensajes reservados obtuvo 50 % de exactitud de categoría (4/8). El ejemplo de acceso sin autorización produjo SECURITY. Esta cifra describe únicamente el conjunto sintético inicial y no acredita precisión de producción. Las pruebas de la API incluyen el contrato ML, el control de errores y la prioridad crítica con revisión humana ante una instrucción que intenta rebajar una vulnerabilidad.
+- **Evaluación en `test` aislado (40 tickets):** **92.5% de accuracy** (37/40) y **100.0% de recall en `SECURITY`** (0 falsos negativos, 1 falso positivo).
+- **Matriz de confusión, reporte por clase y tabla comparativa de los 3 motores** (`traditional`, `machine_learning`, `generative`): disponibles en [`reports/ml_evaluation.md`](reports/ml_evaluation.md) y [`reports/ml_evaluation.json`](reports/ml_evaluation.json).
+- **Verificación automatizada:** 52 pruebas aprobadas (`uv run pytest -v`), incluyendo quality gate del dataset, ausencia de *data leakage*, umbral de baja confianza y guardarraíl de seguridad.
