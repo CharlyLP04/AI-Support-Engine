@@ -297,14 +297,17 @@ def main() -> None:
     print(metrics["confusion_matrix"])
     print("\n=== Pruebas de inferencia en frases nuevas ===")
     samples = [
+        "Encontré datos de otros clientes",
         "Mi cuenta fue bloqueada tras varios intentos",
         "La pantalla desaparece al confirmar una compra",
         "Puedo abrir información de usuarios ajenos",
     ]
     for sample in samples:
-        pred = model.predict([sample])[0]
-        score = float(model.predict_proba([sample]).max())
-        print(f"- {sample!r} -> {pred} (score aprox: {score:.3f})")
+        category = model.predict([sample])[0]
+        confidence = float(model.predict_proba([sample]).max())
+        print(f"\nMensaje: {sample}")
+        print("Categoría:", category)
+        print("Score aproximado:", round(confidence, 3))
 
     if args.export_report:
         json_path, md_path = export_evaluation_reports(args.csv)
